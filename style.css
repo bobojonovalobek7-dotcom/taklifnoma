@@ -883,19 +883,22 @@ body[data-reveal-ready="true"] .page-slide[data-inview="true"] .rv-draw {
 }
 
 .monogram-circle {
-  width: 52px;
-  height: 52px;
+  width: 58px;
+  height: 58px;
   border-radius: 50%;
   border: 1.5px solid var(--gold-primary);
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
+  white-space: nowrap;
   font-family: var(--font-serif);
-  font-size: 1.15rem;
+  font-size: 1.05rem;
   font-weight: 700;
+  letter-spacing: 2px;
   color: var(--gold-dark);
-  background: #fff;
+  background: #ffffff;
   box-shadow: 0 4px 15px rgba(191, 161, 75, 0.15);
+  padding: 0 4px;
 }
 
 .slide-tag {

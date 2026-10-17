@@ -432,21 +432,69 @@ document.addEventListener('DOMContentLoaded', () => {
     bankCard.addEventListener('touchend', handleLeave);
   }
 
-  if (btnCopyCard) {
-    btnCopyCard.addEventListener('click', () => {
-      const rawCardNumber = '9860010408879400';
+  // Bulletproof Clipboard Copy (Supports HTTP, HTTPS, iOS Safari, Android, Desktop)
+  function copyCardNumber() {
+    const rawCardNumber = '9860010408879400';
 
+    // 1. Try modern clipboard API if available in secure context
+    if (navigator.clipboard && window.isSecureContext && typeof navigator.clipboard.writeText === 'function') {
       navigator.clipboard.writeText(rawCardNumber).then(() => {
         showCopyToast();
       }).catch(() => {
-        const textarea = document.createElement('textarea');
-        textarea.value = rawCardNumber;
-        document.body.appendChild(textarea);
-        textarea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textarea);
-        showCopyToast();
+        fallbackCopy(rawCardNumber);
       });
+      return;
+    }
+
+    // 2. Direct fallback for HTTP / non-secure contexts & iOS Safari
+    fallbackCopy(rawCardNumber);
+  }
+
+  function fallbackCopy(text) {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.style.position = 'fixed';
+    textarea.style.top = '0';
+    textarea.style.left = '0';
+    textarea.style.width = '2em';
+    textarea.style.height = '2em';
+    textarea.style.padding = '0';
+    textarea.style.border = 'none';
+    textarea.style.outline = 'none';
+    textarea.style.boxShadow = 'none';
+    textarea.style.background = 'transparent';
+    textarea.style.opacity = '0.01';
+    textarea.setAttribute('readonly', '');
+    document.body.appendChild(textarea);
+
+    textarea.focus();
+    textarea.select();
+    textarea.setSelectionRange(0, text.length);
+
+    try {
+      const successful = document.execCommand('copy');
+      if (successful) {
+        showCopyToast();
+      } else {
+        prompt('Karta raqami nusxalash uchun:', text);
+      }
+    } catch (err) {
+      prompt('Karta raqami nusxalash uchun:', text);
+    } finally {
+      document.body.removeChild(textarea);
+    }
+  }
+
+  if (btnCopyCard) {
+    btnCopyCard.addEventListener('click', (e) => {
+      e.preventDefault();
+      copyCardNumber();
+    });
+  }
+
+  if (bankCard) {
+    bankCard.addEventListener('click', () => {
+      copyCardNumber();
     });
   }
 
