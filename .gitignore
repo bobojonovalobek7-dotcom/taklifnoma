@@ -1,0 +1,8 @@
+# Private SSH keys and credentials
+*.pem
+*.key
+.env
+.env.*
+
+# Backups
+presentation_backup.*
